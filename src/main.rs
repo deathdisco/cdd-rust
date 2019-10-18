@@ -69,7 +69,8 @@ fn main() -> Result<(), String> {
 fn list_models(file: PathBuf) {
     let reply = r#"
         [{
-            "name": "Pets"
+            "name": "Pets",
+            "vars" : []
         }]
     "#;
     println!("{}", reply);
@@ -78,7 +79,11 @@ fn list_models(file: PathBuf) {
 fn list_routes(file: PathBuf) {
     let reply = r#"
         [{
-            "name": "Pets"
+            "method": "GET",
+            "url_path": "/v1/pets",
+            "response_type": "Pet",
+            "error_type": "Error",
+            "vars": []
         }]
     "#;
     println!("{}", reply);
