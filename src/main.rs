@@ -9,28 +9,36 @@ enum Command {
         #[structopt(help = "", parse(from_os_str), name = "file")]
         file: PathBuf,
     },
-    #[structopt(name = "list-routes", about = "Lists routes in a source file")]
-    ListRoutes {
+    #[structopt(name = "list-Requests", about = "Lists Requests in a source file")]
+    ListRequests {
         #[structopt(help = "", parse(from_os_str), name = "file")]
         file: PathBuf,
     },
     #[structopt(name = "update-model", about = "Update a model in a source file")]
-    UpdateModels {
+    UpdateModel {
+        #[structopt(help = "", parse(from_os_str), name = "file")]
+        file: PathBuf,
         #[structopt(help = "", name = "json")]
         json: String,
     },
-    #[structopt(name = "update-route", about = "Update a route in a source file")]
-    UpdateRoutes {
+    #[structopt(name = "update-request", about = "Update a Request in a source file")]
+    UpdateRequest {
+        #[structopt(help = "", parse(from_os_str), name = "file")]
+        file: PathBuf,
         #[structopt(help = "", name = "json")]
         json: String,
     },
     #[structopt(name = "delete-model", about = "Delete a model in a source file")]
-    DeleteModels {
+    DeleteModel {
+        #[structopt(help = "", parse(from_os_str), name = "file")]
+        file: PathBuf,
         #[structopt(help = "", name = "name")]
         name: String,
     },
-    #[structopt(name = "delete-route", about = "Delete a route in a source file")]
-    DeleteRoutes {
+    #[structopt(name = "delete-request", about = "Delete a request in a source file")]
+    DeleteRequest {
+        #[structopt(help = "", parse(from_os_str), name = "file")]
+        file: PathBuf,
         #[structopt(help = "", name = "name")]
         name: String,
     },
@@ -52,11 +60,11 @@ fn main() -> Result<(), String> {
             std::process::exit(1);
         }
         Command::ListModels { file } => list_models(file),
-        Command::ListRoutes { file } => list_routes(file),
-        Command::UpdateModels { json } => update_models(json),
-        Command::UpdateRoutes { json } => update_routes(json),
-        Command::DeleteModels { name } => delete_models(name),
-        Command::DeleteRoutes { name } => delete_routes(name),
+        Command::ListRequests { file } => list_requests(file),
+        Command::UpdateModel { file, json } => update_model(json),
+        Command::UpdateRequest { file, json } => update_request(json),
+        Command::DeleteModel { file, name } => delete_model(name),
+        Command::DeleteRequest { file, name } => delete_request(name),
         _ => {
             eprintln!("Unsupported or unknown operation");
             std::process::exit(1);
@@ -70,34 +78,34 @@ fn list_models(file: PathBuf) {
     let reply = r#"
         [{
             "name": "Pets",
-            "vars" : []
+            "fields": []
         }]
     "#;
     println!("{}", reply);
 }
 
-fn list_routes(file: PathBuf) {
+fn list_requests(file: PathBuf) {
     let reply = r#"
         [{
-            "method": "GET",
-            "url_path": "/v1/pets",
+            "method": "Get_",
+            "name": "/v1/pets",
             "response_type": "Pet",
             "error_type": "Error",
-            "vars": []
+            "fields": []
         }]
     "#;
     println!("{}", reply);
 }
 
-fn update_models(json: String) {
+fn update_model(json: String) {
     println!("json file")
 }
-fn update_routes(json: String) {
+fn update_request(json: String) {
     println!("json file")
 }
-fn delete_models(name: String) {
+fn delete_model(name: String) {
     println!("Model successfully deleted")
 }
-fn delete_routes(name: String) {
-    println!("Route successfully deleted")
+fn delete_request(name: String) {
+    println!("Request successfully deleted")
 }
