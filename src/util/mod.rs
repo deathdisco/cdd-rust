@@ -2,7 +2,7 @@ mod filesystem;
 pub use filesystem::*;
 use std::path::PathBuf;
 
-pub fn read_file(pathbuf: PathBuf) -> Result<String, Box<dyn std::error::Error>> {
+pub fn read_file(pathbuf: PathBuf) -> Result<String, failure::Error> {
     use std::fs::File;
     use std::io::prelude::*;
 
@@ -19,7 +19,7 @@ pub fn read_file(pathbuf: PathBuf) -> Result<String, Box<dyn std::error::Error>>
     Ok(buffer)
 }
 
-pub fn write_file(pathbuf: PathBuf, content: &str) -> Result<(), Box<dyn std::error::Error>> {
+pub fn write_file(pathbuf: PathBuf, content: &str) -> Result<(), failure::Error> {
     use std::fs::File;
     use std::io::prelude::*;
 

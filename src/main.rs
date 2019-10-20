@@ -3,6 +3,7 @@ use structopt::StructOpt;
 
 mod util;
 mod visitors;
+mod writers;
 
 #[derive(StructOpt, Debug)]
 enum Command {
@@ -25,6 +26,20 @@ enum Command {
     },
     #[structopt(name = "update-request", about = "Update a Request in a source file")]
     UpdateRequest {
+        #[structopt(help = "", parse(from_os_str), name = "file")]
+        file: PathBuf,
+        #[structopt(help = "", name = "json")]
+        json: String,
+    },
+    #[structopt(name = "add-model", about = "Add a model in a source file")]
+    AddModel {
+        #[structopt(help = "", parse(from_os_str), name = "file")]
+        file: PathBuf,
+        #[structopt(help = "", name = "json")]
+        json: String,
+    },
+    #[structopt(name = "add-request", about = "Add a Request in a source file")]
+    AddRequest {
         #[structopt(help = "", parse(from_os_str), name = "file")]
         file: PathBuf,
         #[structopt(help = "", name = "json")]
@@ -65,6 +80,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Command::ListRequests { file } => list_requests(file),
         Command::UpdateModel { file, json } => update_model(json),
         Command::UpdateRequest { file, json } => update_request(json),
+        Command::AddModel { file, json } => add_model(json),
+        Command::AddRequest { file, json } => add_request(json),
         Command::DeleteModel { file, name } => delete_model(name),
         Command::DeleteRequest { file, name } => delete_request(name),
         _ => {
@@ -102,6 +119,12 @@ fn update_model(json: String) {
     println!("json file")
 }
 fn update_request(json: String) {
+    println!("json file")
+}
+fn add_model(json: String) {
+    println!("json file")
+}
+fn add_request(json: String) {
     println!("json file")
 }
 fn delete_model(name: String) {
