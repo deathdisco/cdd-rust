@@ -1,6 +1,8 @@
-mod visitors;
 use std::path::PathBuf;
 use structopt::StructOpt;
+
+mod util;
+mod visitors;
 
 #[derive(StructOpt, Debug)]
 enum Command {
@@ -49,7 +51,7 @@ enum Command {
     Error,
 }
 
-fn main() -> Result<(), String> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     // let code = r#"struct Test;"#;
     // let visitor = visitors::StructVisitor::new(code);
 
@@ -59,7 +61,7 @@ fn main() -> Result<(), String> {
             eprintln!("A second line");
             std::process::exit(1);
         }
-        Command::ListModels { file } => list_models(file),
+        Command::ListModels { file } => list_models(file)?,
         Command::ListRequests { file } => list_requests(file),
         Command::UpdateModel { file, json } => update_model(json),
         Command::UpdateRequest { file, json } => update_request(json),
@@ -74,24 +76,23 @@ fn main() -> Result<(), String> {
     Ok(())
 }
 
-fn list_models(file: PathBuf) {
-    let reply = r#"
-        [{
-            "name": "Pets",
-            "fields": []
-        }]
-    "#;
-    println!("{}", reply);
+fn list_models(file: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
+    let models = visitors::extract_models(&util::read_file(file)?);
+    let json = &serde_json::to_string(&models)?;
+
+    println!("{}", json);
+
+    Ok(())
 }
 
 fn list_requests(file: PathBuf) {
     let reply = r#"
         [{
-            "method": "Get_",
+            "method": "GET",
             "name": "/v1/pets",
             "response_type": "Pet",
             "error_type": "Error",
-            "fields": []
+            "vars": []
         }]
     "#;
     println!("{}", reply);
