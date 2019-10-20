@@ -96,7 +96,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "cdd"
 version = "0.0.1"
-source = "git+https://github.com/offscale/cdd-ctl.git#3cb440f0bf8b0a12f6c244228e78b4a8945e493f"
+source = "git+https://github.com/offscale/cdd-ctl.git#99fd8d4d19e123501ad618c404b19ca6c7f93d35"
 dependencies = [
  "colored 1.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "dirs 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)",

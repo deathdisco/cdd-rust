@@ -31,15 +31,15 @@ enum Command {
         #[structopt(help = "", name = "json")]
         json: String,
     },
-    #[structopt(name = "add-model", about = "Add a model in a source file")]
-    AddModel {
+    #[structopt(name = "insert-model", about = "Insert a model in a source file")]
+    InsertModel {
         #[structopt(help = "", parse(from_os_str), name = "file")]
         file: PathBuf,
         #[structopt(help = "", name = "json")]
         json: String,
     },
-    #[structopt(name = "add-request", about = "Add a Request in a source file")]
-    AddRequest {
+    #[structopt(name = "insert-request", about = "Insert a Request in a source file")]
+    InsertRequest {
         #[structopt(help = "", parse(from_os_str), name = "file")]
         file: PathBuf,
         #[structopt(help = "", name = "json")]
@@ -77,11 +77,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             std::process::exit(1);
         }
         Command::ListModels { file } => list_models(file)?,
-        Command::ListRequests { file } => list_requests(file),
+        Command::ListRequests { file } => list_requests(file)?,
         Command::UpdateModel { file, json } => update_model(json),
         Command::UpdateRequest { file, json } => update_request(json),
-        Command::AddModel { file, json } => add_model(json),
-        Command::AddRequest { file, json } => add_request(json),
+        Command::InsertModel { file, json } => insert_model(json),
+        Command::InsertRequest { file, json } => insert_request(json),
         Command::DeleteModel { file, name } => delete_model(name),
         Command::DeleteRequest { file, name } => delete_request(name),
         _ => {
@@ -93,7 +93,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn list_models(file: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
+fn list_models(file: PathBuf) -> Result<(), failure::Error> {
     let models = visitors::extract_models(&util::read_file(file)?);
     let json = &serde_json::to_string(&models)?;
 
@@ -102,17 +102,13 @@ fn list_models(file: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn list_requests(file: PathBuf) {
-    let reply = r#"
-        [{
-            "method": "GET",
-            "name": "/v1/pets",
-            "response_type": "Pet",
-            "error_type": "Error",
-            "vars": []
-        }]
-    "#;
-    println!("{}", reply);
+fn list_requests(file: PathBuf) -> Result<(), failure::Error> {
+    let requests = visitors::extract_requests(&util::read_file(file)?);
+    let json = &serde_json::to_string(&requests)?;
+
+    println!("{}", json);
+
+    Ok(())
 }
 
 fn update_model(json: String) {
@@ -121,10 +117,10 @@ fn update_model(json: String) {
 fn update_request(json: String) {
     println!("json file")
 }
-fn add_model(json: String) {
+fn insert_model(json: String) {
     println!("json file")
 }
-fn add_request(json: String) {
+fn insert_request(json: String) {
     println!("json file")
 }
 fn delete_model(name: String) {
