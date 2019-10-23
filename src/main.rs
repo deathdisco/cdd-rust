@@ -66,10 +66,14 @@ enum Command {
     Error,
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), String> {
     // let code = r#"struct Test;"#;
     // let visitor = visitors::StructVisitor::new(code);
 
+    run().map_err(|e| format!("{}", e))
+}
+
+fn run() -> Result<(), failure::Error> {
     match Command::from_args() {
         Command::Error => {
             eprintln!("An example error to test things with");
@@ -78,10 +82,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         Command::ListModels { file } => list_models(file)?,
         Command::ListRequests { file } => list_requests(file)?,
-        Command::UpdateModel { file, json } => update_model(json),
-        Command::UpdateRequest { file, json } => update_request(json),
-        Command::InsertModel { file, json } => insert_model(json),
-        Command::InsertRequest { file, json } => insert_request(json),
+        Command::UpdateModel { file, json } => update_model(json, file)?,
+        Command::UpdateRequest { file, json } => update_request(json, file)?,
+        Command::InsertModel { file, json } => insert_model(json, file)?,
+        Command::InsertRequest { file, json } => insert_request(json, file)?,
         Command::DeleteModel { file, name } => delete_model(name),
         Command::DeleteRequest { file, name } => delete_request(name),
         _ => {
@@ -94,7 +98,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn list_models(file: PathBuf) -> Result<(), failure::Error> {
-    let models = visitors::extract_models(&util::read_file(file)?);
+    let models = visitors::extract_models(&util::read_file(file)?)?;
     let json = &serde_json::to_string(&models)?;
 
     println!("{}", json);
@@ -103,7 +107,7 @@ fn list_models(file: PathBuf) -> Result<(), failure::Error> {
 }
 
 fn list_requests(file: PathBuf) -> Result<(), failure::Error> {
-    let requests = visitors::extract_requests(&util::read_file(file)?);
+    let requests = visitors::extract_requests(&util::read_file(file)?)?;
     let json = &serde_json::to_string(&requests)?;
 
     println!("{}", json);
@@ -111,17 +115,48 @@ fn list_requests(file: PathBuf) -> Result<(), failure::Error> {
     Ok(())
 }
 
-fn update_model(json: String) {
-    println!("json file")
+fn update_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
+    let model: cdd::Model = serde_json::from_str::<cdd::Model>(&json)?;
+
+    let models: Vec<cdd::Model> = visitors::extract_models(&util::read_file(file.clone())?)?
+        .into_iter()
+        .map(|src_model| {
+            if model.name == src_model.name {
+                model.clone()
+            } else {
+                src_model
+            }
+        })
+        .collect();
+
+    util::write_file(file.clone(), &writers::print_models(models))
 }
-fn update_request(json: String) {
-    println!("json file")
+fn update_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
+    let request: cdd::Request = serde_json::from_str::<cdd::Request>(&json)?;
+
+    let requests: Vec<cdd::Request> = visitors::extract_requests(&util::read_file(file.clone())?)?
+        .into_iter()
+        .map(|src_request| {
+            if request.name == src_request.name {
+                request.clone()
+            } else {
+                src_request
+            }
+        })
+        .collect();
+
+    util::write_file(file.clone(), &writers::print_requests(requests))
 }
-fn insert_model(json: String) {
-    println!("json file")
+fn insert_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
+    let mut models: Vec<cdd::Model> = visitors::extract_models(&util::read_file(file.clone())?)?;
+    models.push(serde_json::from_str::<cdd::Model>(&json)?);
+    util::write_file(file.clone(), &writers::print_models(models))
 }
-fn insert_request(json: String) {
-    println!("json file")
+fn insert_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
+    let mut requests: Vec<cdd::Request> =
+        visitors::extract_requests(&util::read_file(file.clone())?)?;
+    requests.push(serde_json::from_str::<cdd::Request>(&json)?);
+    util::write_file(file.clone(), &writers::print_requests(requests))
 }
 fn delete_model(name: String) {
     println!("Model successfully deleted")

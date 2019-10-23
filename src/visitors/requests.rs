@@ -1,12 +1,12 @@
 use super::struct_visitor::*;
 use cdd::*;
 
-pub fn extract_requests(code: &str) -> Vec<Request> {
-    let mut visitor = StructVisitor::new(&code).unwrap();
-    let syntax = syn::parse_file(&code).unwrap();
+pub fn extract_requests(code: &str) -> Result<Vec<Request>, failure::Error> {
+    let mut visitor = StructVisitor::new(&code)?;
+    let syntax = syn::parse_file(&code)?;
     syn::visit::visit_file(&mut visitor, &syntax);
-    visitor
-        .structs()
+    Ok(visitor
+        .structs
         .into_iter()
         .map(|name| Request {
             name,
@@ -16,5 +16,5 @@ pub fn extract_requests(code: &str) -> Vec<Request> {
             method: Method::Get_,
             response_type: "Petty".to_string(),
         })
-        .collect()
+        .collect())
 }

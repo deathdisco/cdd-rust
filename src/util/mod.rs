@@ -20,13 +20,7 @@ pub fn read_file(pathbuf: PathBuf) -> Result<String, failure::Error> {
 }
 
 pub fn write_file(pathbuf: PathBuf, content: &str) -> Result<(), failure::Error> {
-    use std::fs::File;
-    use std::io::prelude::*;
-
-    let mut f = File::open(pathbuf)?;
-    f.write_all(content.as_bytes())?;
-
-    Ok(())
+    Ok(std::fs::write(pathbuf, content)?)
 }
 
 pub fn file_exists<S: std::convert::AsRef<std::ffi::OsStr>>(filename: S) -> bool {
