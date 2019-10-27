@@ -28,11 +28,7 @@ fn request_to_string(request: Request) -> String {
 
 fn class_to_string(name: String, vars: Vec<Variable>) -> String {
     format!(
-        r#"
-    struct {} {{
-{}
-    }}
-        "#,
+        r#"struct {} {{{}}}"#,
         name,
         vars.into_iter().map(var_to_string).collect::<String>()
     )
@@ -40,7 +36,7 @@ fn class_to_string(name: String, vars: Vec<Variable>) -> String {
 
 fn var_to_string(var: Variable) -> String {
     format!(
-        "       {}: {},\n",
+        "{}: {},\n",
         var.name,
         variable_type_to_rust_type(var.variable_type)
     )

@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 use structopt::StructOpt;
 
+mod extractors;
+mod rustfmt;
 mod util;
 mod visitors;
 mod writers;
@@ -129,7 +131,9 @@ fn update_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
         })
         .collect();
 
-    util::write_file(file.clone(), &writers::print_models(models))
+    util::write_file(file.clone(), &writers::print_models(models))?;
+    rustfmt::rustfmt(file.to_str().ok_or(failure::format_err!("bad file"))?)?;
+    Ok(())
 }
 fn update_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
     let request: cdd::Request = serde_json::from_str::<cdd::Request>(&json)?;
@@ -145,7 +149,9 @@ fn update_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
         })
         .collect();
 
-    util::write_file(file.clone(), &writers::print_requests(requests))
+    util::write_file(file.clone(), &writers::print_requests(requests))?;
+    rustfmt::rustfmt(file.to_str().ok_or(failure::format_err!("bad file"))?)?;
+    Ok(())
 }
 fn insert_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
     let mut models: Vec<cdd::Model> = visitors::extract_models(&util::read_file(file.clone())?)?;
