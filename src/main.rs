@@ -1,7 +1,6 @@
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-mod extractors;
 mod rustfmt;
 mod util;
 mod visitors;

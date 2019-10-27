@@ -4,6 +4,14 @@ use std::collections::HashMap;
 use syn::visit::Visit;
 use syn::{Fields, FieldsNamed, Ident, Item, ItemStruct, Type};
 
+pub fn extract_structures(code: &str) -> Result<HashMap<String, Vec<Variable>>, failure::Error> {
+    let mut visitor = StructVisitor::new();
+    let syntax = syn::parse_file(&code)?;
+    syn::visit::visit_file(&mut visitor, &syntax);
+
+    Ok(visitor.structs)
+}
+
 fn syn_type_to_cdd_type(ty: &str) -> VariableType {
     match ty {
         "String" => VariableType::StringType,
@@ -91,7 +99,6 @@ fn test_var_parse() {
     let syntax = syn::parse_file(&code).unwrap();
     syn::visit::visit_file(&mut visitor, &syntax);
 
-    println!("-- {:#?}", visitor.structs);
     assert!(visitor.structs.contains_key("Dog"));
     assert_eq!(visitor.structs.len(), 1);
     assert_eq!(visitor.structs["Dog"].len(), 2);

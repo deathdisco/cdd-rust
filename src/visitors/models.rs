@@ -2,12 +2,11 @@ use super::struct_visitor::*;
 use cdd::*;
 
 pub fn extract_models(code: &str) -> Result<Vec<Model>, failure::Error> {
-    let mut visitor = StructVisitor::new();
-    let syntax = syn::parse_file(&code)?;
-    syn::visit::visit_file(&mut visitor, &syntax);
-    Ok(visitor
-        .structs
+    Ok(extract_structures(code)?
         .into_iter()
-        .map(|(name, vars)| Model { name, vars: vec![] })
+        .map(|(name, vars)| Model {
+            name,
+            vars: vars.into_iter().map(|v| Box::new(v)).collect(),
+        })
         .collect())
 }
