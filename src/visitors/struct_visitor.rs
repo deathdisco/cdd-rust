@@ -27,7 +27,7 @@ fn extract_variables(fields: &Fields) -> Vec<cdd::Variable> {
         if let Some(ident) = &field.ident {
             if let Type::Path(ty) = &field.ty {
                 for segment in &ty.path.segments {
-                    println!("var: {}: {}", ident, segment.ident);
+                    // println!("var: {}: {}", ident, segment.ident);
                     let name = format!("{}", ident);
                     let ty = format!("{}", segment.ident);
 

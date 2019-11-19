@@ -60,6 +60,9 @@ enum Command {
         #[structopt(help = "", name = "name")]
         name: String,
     },
+    #[structopt(name = "generate-tests", about = "Generate unit tests for a project")]
+    GenerateTests,
+
     #[structopt(
         name = "test-error",
         about = "Generate a response from stderr (for testing)"
@@ -89,6 +92,7 @@ fn run() -> Result<(), failure::Error> {
         Command::InsertRequest { file, json } => insert_request(json, file)?,
         Command::DeleteModel { file, name } => delete_model(name),
         Command::DeleteRequest { file, name } => delete_request(name),
+        Command::GenerateTests => generate_tests(),
         _ => {
             eprintln!("Unsupported or unknown operation");
             std::process::exit(1);
@@ -108,7 +112,7 @@ fn list_models(file: PathBuf) -> Result<(), failure::Error> {
 }
 
 fn list_requests(file: PathBuf) -> Result<(), failure::Error> {
-    let requests = visitors::extract_requests(&util::read_file(file)?)?;
+    let requests = visitors::extract_requests(&util::read_file(file)?);
     let json = &serde_json::to_string(&requests)?;
 
     println!("{}", json);
@@ -137,7 +141,7 @@ fn update_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
 fn update_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
     let request: cdd::Request = serde_json::from_str::<cdd::Request>(&json)?;
 
-    let requests: Vec<cdd::Request> = visitors::extract_requests(&util::read_file(file.clone())?)?
+    let requests: Vec<cdd::Request> = visitors::extract_requests(&util::read_file(file.clone())?)
         .into_iter()
         .map(|src_request| {
             if request.name == src_request.name {
@@ -159,7 +163,7 @@ fn insert_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
 }
 fn insert_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
     let mut requests: Vec<cdd::Request> =
-        visitors::extract_requests(&util::read_file(file.clone())?)?;
+        visitors::extract_requests(&util::read_file(file.clone())?);
     requests.push(serde_json::from_str::<cdd::Request>(&json)?);
     util::write_file(file.clone(), &writers::print_requests(requests))
 }
@@ -168,4 +172,7 @@ fn delete_model(name: String) {
 }
 fn delete_request(name: String) {
     println!("Request successfully deleted")
+}
+fn generate_tests() {
+    println!("Generating tests")
 }
