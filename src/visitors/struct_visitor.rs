@@ -13,10 +13,14 @@ pub fn extract_structures(code: &str) -> Result<HashMap<String, Vec<Variable>>, 
 }
 
 fn syn_type_to_cdd_type(ty: &str) -> VariableType {
+    // println!("SYN TYPE: {:#?}", ty);
     match ty {
         "String" => VariableType::StringType,
+        "i64" => VariableType::IntType,
         "f64" => VariableType::FloatType,
-        _ => VariableType::BoolType,
+        "bool" => VariableType::BoolType,
+        "Vec" => VariableType::ArrayType(Box::new(VariableType::StringType)), // fix
+        _ => VariableType::ComplexType("Unknown".to_string()), // fix
     }
 }
 

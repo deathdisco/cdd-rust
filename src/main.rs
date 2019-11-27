@@ -13,7 +13,7 @@ enum Command {
         #[structopt(help = "", parse(from_os_str), name = "file")]
         file: PathBuf,
     },
-    #[structopt(name = "list-Requests", about = "Lists Requests in a source file")]
+    #[structopt(name = "list-requests", about = "Lists Requests in a source file")]
     ListRequests {
         #[structopt(help = "", parse(from_os_str), name = "file")]
         file: PathBuf,
@@ -156,23 +156,28 @@ fn update_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
     rustfmt::rustfmt(file.to_str().ok_or(failure::format_err!("bad file"))?)?;
     Ok(())
 }
+
 fn insert_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
     let mut models: Vec<cdd::Model> = visitors::extract_models(&util::read_file(file.clone())?)?;
     models.push(serde_json::from_str::<cdd::Model>(&json)?);
     util::write_file(file.clone(), &writers::print_models(models))
 }
+
 fn insert_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
     let mut requests: Vec<cdd::Request> =
         visitors::extract_requests(&util::read_file(file.clone())?);
     requests.push(serde_json::from_str::<cdd::Request>(&json)?);
     util::write_file(file.clone(), &writers::print_requests(requests))
 }
+
 fn delete_model(name: String) {
     println!("Model successfully deleted")
 }
+
 fn delete_request(name: String) {
     println!("Request successfully deleted")
 }
+
 fn generate_tests() {
     println!("Generating tests")
 }

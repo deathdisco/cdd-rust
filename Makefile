@@ -1,6 +1,6 @@
 install:
 	cargo build
-	mkdir -p ~/.cdd/services
+	mkdir -p ~/.cdd/bin
 	cp -f target/debug/cdd-rust ~/.cdd/bin/cdd-rust
 
 test:

@@ -2,12 +2,17 @@ use crate::util;
 use cdd::*;
 use std::path::PathBuf;
 
+mod models;
+mod routes;
+
 pub fn print_models(models: Vec<Model>) -> String {
-    models
+    let printed_models = models
         .into_iter()
         .map(model_to_string)
         .collect::<Vec<String>>()
-        .join("\n\n")
+        .join("\n\n");
+    
+    format!("use diesel::Queryable;\n\n{}", printed_models)
 }
 
 pub fn print_requests(requests: Vec<Request>) -> String {
@@ -19,7 +24,10 @@ pub fn print_requests(requests: Vec<Request>) -> String {
 }
 
 fn model_to_string(model: Model) -> String {
-    class_to_string(model.name, model.vars.into_iter().map(|v| *v).collect())
+    println!("WRITING MODEL: {:#?}", model);
+    format!(
+        "#[derive(Queryable, Debug)]\n{}",
+        class_to_string(model.name, model.vars.into_iter().map(|v| *v).collect()))
 }
 
 fn request_to_string(request: Request) -> String {
@@ -28,7 +36,7 @@ fn request_to_string(request: Request) -> String {
 
 fn class_to_string(name: String, vars: Vec<Variable>) -> String {
     format!(
-        r#"struct {} {{{}}}"#,
+        "struct {} {{{}}}",
         name,
         vars.into_iter().map(var_to_string).collect::<String>()
     )
@@ -48,7 +56,7 @@ fn variable_type_to_rust_type(vartype: VariableType) -> String {
         VariableType::BoolType => "bool".to_string(),
         VariableType::FloatType => "f64".to_string(),
         VariableType::IntType => "i64".to_string(),
-        VariableType::ArrayType(_) => "Vec<>".to_string(),
+        VariableType::ArrayType(t) => format!("Vec<{}>", variable_type_to_rust_type(*t)),
         VariableType::ComplexType(t) => t,
     }
 }
