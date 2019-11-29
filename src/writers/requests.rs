@@ -5,6 +5,10 @@ use crate::schema::pet::dsl::*;
 use crate::models::*;
 use crate::diesel::*;
 
+pub(crate) fn root(_req: HttpRequest) -> impl Responder {
+    format!("/")
+}
+
 pub(crate) fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(
         $ROUTES
