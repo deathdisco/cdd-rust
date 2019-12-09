@@ -1,5 +1,3 @@
-mod filesystem;
-pub use filesystem::*;
 use std::path::PathBuf;
 
 pub fn read_file(pathbuf: PathBuf) -> Result<String, failure::Error> {
