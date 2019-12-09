@@ -13,11 +13,13 @@ enum Command {
         #[structopt(help = "", parse(from_os_str), name = "file")]
         file: PathBuf,
     },
+
     #[structopt(name = "list-requests", about = "Lists Requests in a source file")]
     ListRequests {
         #[structopt(help = "", parse(from_os_str), name = "file")]
         file: PathBuf,
     },
+
     #[structopt(name = "update-model", about = "Update a model in a source file")]
     UpdateModel {
         #[structopt(help = "", parse(from_os_str), name = "file")]
@@ -25,6 +27,7 @@ enum Command {
         #[structopt(help = "", name = "json")]
         json: String,
     },
+
     #[structopt(name = "update-request", about = "Update a Request in a source file")]
     UpdateRequest {
         #[structopt(help = "", parse(from_os_str), name = "file")]
@@ -32,6 +35,7 @@ enum Command {
         #[structopt(help = "", name = "json")]
         json: String,
     },
+
     #[structopt(name = "insert-model", about = "Insert a model in a source file")]
     InsertModel {
         #[structopt(help = "", parse(from_os_str), name = "file")]
@@ -39,6 +43,7 @@ enum Command {
         #[structopt(help = "", name = "json")]
         json: String,
     },
+
     #[structopt(name = "insert-request", about = "Insert a Request in a source file")]
     InsertRequest {
         #[structopt(help = "", parse(from_os_str), name = "file")]
@@ -46,6 +51,7 @@ enum Command {
         #[structopt(help = "", name = "json")]
         json: String,
     },
+
     #[structopt(name = "delete-model", about = "Delete a model in a source file")]
     DeleteModel {
         #[structopt(help = "", parse(from_os_str), name = "file")]
@@ -53,6 +59,7 @@ enum Command {
         #[structopt(help = "", name = "name")]
         name: String,
     },
+
     #[structopt(name = "delete-request", about = "Delete a request in a source file")]
     DeleteRequest {
         #[structopt(help = "", parse(from_os_str), name = "file")]
@@ -60,6 +67,7 @@ enum Command {
         #[structopt(help = "", name = "name")]
         name: String,
     },
+
     #[structopt(name = "generate-tests", about = "Generate unit tests for a project")]
     GenerateTests,
 
@@ -71,9 +79,6 @@ enum Command {
 }
 
 fn main() -> Result<(), String> {
-    // let code = r#"struct Test;"#;
-    // let visitor = visitors::StructVisitor::new(code);
-
     run().map_err(|e| format!("{}", e))
 }
 
@@ -90,13 +95,9 @@ fn run() -> Result<(), failure::Error> {
         Command::UpdateRequest { file, json } => update_request(json, file)?,
         Command::InsertModel { file, json } => insert_model(json, file)?,
         Command::InsertRequest { file, json } => insert_request(json, file)?,
-        Command::DeleteModel { file, name } => delete_model(name),
-        Command::DeleteRequest { file, name } => delete_request(name),
+        Command::DeleteModel { file, name } => delete_model(name, file)?,
+        Command::DeleteRequest { file, name } => delete_request(name, file)?,
         Command::GenerateTests => generate_tests(),
-        _ => {
-            eprintln!("Unsupported or unknown operation");
-            std::process::exit(1);
-        }
     }
 
     Ok(())
@@ -170,12 +171,14 @@ fn insert_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
     util::write_file(file.clone(), &writers::print_requests(requests))
 }
 
-fn delete_model(name: String) {
-    println!("Model successfully deleted")
+fn delete_model(_name: String, _file: PathBuf) -> Result<(), failure::Error> {
+    println!("Model successfully deleted");
+    Ok(())
 }
 
-fn delete_request(name: String) {
-    println!("Request successfully deleted")
+fn delete_request(_name: String, _file: PathBuf) -> Result<(), failure::Error> {
+    println!("Request successfully deleted");
+    Ok(())
 }
 
 fn generate_tests() {

@@ -1,6 +1,4 @@
-use crate::util;
 use cdd::*;
-use std::path::PathBuf;
 
 mod models;
 pub use models::*;
@@ -18,7 +16,6 @@ pub fn print_models(models: Vec<Model>) -> String {
 }
 
 fn model_to_string(model: Model) -> String {
-    println!("WRITING MODEL: {:#?}", model);
     format!(
         "#[derive(Queryable, Debug)]\n{}",
         class_to_string(model.name, model.vars.into_iter().map(|v| *v).collect()))

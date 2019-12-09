@@ -3,7 +3,7 @@ use cdd::*;
 use std::collections::HashMap;
 
 pub fn struct_to_request(structure: (String, Vec<Variable>)) -> Option<Request> {
-    let (name, vars) = structure;
+    let (name, _vars) = structure;
 
     // Some(Request {
     //     path: vars.iter().find(|&s| s.name == "path")?,

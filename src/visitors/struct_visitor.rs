@@ -1,8 +1,7 @@
 use cdd::{Variable, VariableType};
-use failure::*;
 use std::collections::HashMap;
 use syn::visit::Visit;
-use syn::{Fields, FieldsNamed, Ident, Item, ItemStruct, Type};
+use syn::{Fields, Item, Type};
 
 pub fn extract_structures(code: &str) -> Result<HashMap<String, Vec<Variable>>, failure::Error> {
     let mut visitor = StructVisitor::new();
@@ -13,7 +12,6 @@ pub fn extract_structures(code: &str) -> Result<HashMap<String, Vec<Variable>>, 
 }
 
 fn syn_type_to_cdd_type(ty: &str) -> VariableType {
-    // println!("SYN TYPE: {:#?}", ty);
     match ty {
         "String" => VariableType::StringType,
         "i64" => VariableType::IntType,
@@ -23,20 +21,6 @@ fn syn_type_to_cdd_type(ty: &str) -> VariableType {
         _ => VariableType::ComplexType(ty.to_string()), // fix
     }
 }
-
-// fn extract_option_type() -> String {
-//     let type_params = typepath.path.segments.iter().first().unwrap().arguments;
-//     // It should have only on angle-bracketed param ("<String>"):
-//     let generic_arg = match type_params {
-//         PathArguments::AngleBracketed(params) => params.args.iter().first().unwrap(),
-//         _ => panic!("TODO: error handling"),
-//     };
-//     // This argument must be a type:
-//     match generic_arg {
-//         GenericArgument::Type(ty) => ty,
-//         _ => panic!("TODO: error handling"),
-//     }
-// }
 
 fn type_is_option(ty: &Type) -> bool {
     match ty {
@@ -85,58 +69,6 @@ fn extract_variables(fields: &Fields) -> Vec<cdd::Variable> {
             value: None,
             variable_type,
         });
-
-        // println!(
-        //     "NAME :{:?}", extract_name_from_field(&field)
-        // );
-
-        // if type_is_option(&field.ty) {
-        //     println!("OPTION");
-        //     println!("==== {:?}", extract_type_from_option(&field.ty));
-        //     println!("type > {:?}", extract_ident_from_type(extract_type_from_option(&field.ty).unwrap()));
-        // } else {
-        //     println!("VAR");
-        //     println!("type > {:?}", extract_ident_from_type(&field.ty));
-
-        // }
-
-        // if let Some(ident) = &field.ident {
-
-        //     if let Type::Path(ty) = &field.ty {
-
-        //         for segment in &ty.path.segments {
-        //             // println!("var: {}: {}", ident, segment.ident);
-        //             let name = format!("{}", ident);
-        //             let optional = { segment.ident != "Option" };
-
-        //             let ty = if segment.ident == "Option" {
-        //                 if let syn::PathArguments::AngleBracketed(args) = segment.arguments.clone() {
-
-
-        //                     let ty = match args {
-        //                         syn::AngleBracketedGenericArguments{ args, .. } => {
-        //                             println!("ARGS: {:?}", args);
-        //                         },
-        //                         _ => panic!("TODO: error handling"),
-        //                     };
-
-        //                     println!("--{:#?}", ty);
-
-        //                 }
-        //                 format!("{}", segment.ident) // potential bug, user wrote Option without <_>
-        //             } else {
-        //                 format!("{}", segment.ident)
-        //             };
-
-        //             vars.push(cdd::Variable {
-        //                 name,
-        //                 optional,
-        //                 value: None,
-        //                 variable_type: syn_type_to_cdd_type(&ty),
-        //             });
-        //         }
-        //     }
-        // }
     }
     vars
 }

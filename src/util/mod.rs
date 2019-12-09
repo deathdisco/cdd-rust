@@ -23,16 +23,6 @@ pub fn write_file(pathbuf: PathBuf, content: &str) -> Result<(), failure::Error>
     Ok(std::fs::write(pathbuf, content)?)
 }
 
-pub fn file_exists<S: std::convert::AsRef<std::ffi::OsStr>>(filename: S) -> bool {
-    std::path::Path::new(&filename).exists()
-}
-
-// pub trait ActiveMap {
-//     fn active_map<T>(&self, func: fn(T) -> T) -> Vec<T>;
-// }
-
-// impl ActiveMap for Vec<T> {
-//     fn active_map<T>(&self, func: fn(T) -> T) -> Vec<T> {
-//         self.into_iter().map(func).collect()
-//     }
+// pub fn file_exists<S: std::convert::AsRef<std::ffi::OsStr>>(filename: S) -> bool {
+//     std::path::Path::new(&filename).exists()
 // }
