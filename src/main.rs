@@ -5,6 +5,7 @@ mod rustfmt;
 mod util;
 mod visitors;
 mod writers;
+mod rpc;
 
 #[derive(StructOpt, Debug)]
 enum Command {
@@ -79,7 +80,9 @@ enum Command {
 }
 
 fn main() -> Result<(), String> {
-    run().map_err(|e| format!("{}", e))
+    // run().map_err(|e| format!("{}", e))
+    rpc::start_server();
+    Ok(())
 }
 
 fn run() -> Result<(), failure::Error> {
