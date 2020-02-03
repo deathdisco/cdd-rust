@@ -10,7 +10,7 @@ use cdd::*;
 //         .collect())
 // }
 
-pub fn extract_from_ast(syntax: syn::File) -> Result<Vec<Model>, failure::Error> {
+pub fn extract_from_ast(syntax: &syn::File) -> Result<Vec<Model>, failure::Error> {
     let mut visitor = crate::visitors::StructVisitor::new();
     syn::visit::visit_file(&mut visitor, &syntax);
 

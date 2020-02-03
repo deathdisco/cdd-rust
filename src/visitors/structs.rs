@@ -14,7 +14,7 @@ pub fn extract_structures_from_code(code: &str) -> Result<HashMap<String, Vec<Va
 fn syn_type_to_cdd_type(ty: &str) -> VariableType {
     match ty {
         "String" => VariableType::StringType,
-        "i64" => VariableType::IntType,
+        "u32" | "u64" | "i32" | "i64" => VariableType::IntType,
         "f64" => VariableType::FloatType,
         "bool" => VariableType::BoolType,
         "Vec" => VariableType::ArrayType(Box::new(VariableType::StringType)), // fix
