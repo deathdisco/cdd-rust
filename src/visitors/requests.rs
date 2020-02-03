@@ -14,10 +14,10 @@ pub fn struct_to_request(structure: (String, Vec<Variable>)) -> Option<Request> 
 
     Some(Request {
         name,
-        vars: vec![],
+        params: vec![],
         path: "".to_string(),
         error_type: "".to_string(),
-        method: Method::Get_,
+        method: Method::Get,
         response_type: "Petty".to_string(),
     })
 }

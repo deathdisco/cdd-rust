@@ -50,7 +50,7 @@ pub fn print_methods(requests: &Vec<Request>) -> String {
 }
 
 fn request_to_route_call(request: &Request) -> String {
-    let method = request.method.clone().as_string().to_lowercase();
+    let method = format!("{:?}", request.method).to_lowercase();
 
     format!("web::resource(\"{}\").route(web::{}().to({}))",
         request.path,

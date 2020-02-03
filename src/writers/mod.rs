@@ -5,6 +5,10 @@ pub use models::*;
 mod requests;
 pub use requests::*;
 
+pub fn project_to_code(project: Project) -> Result<String, failure::Error> {
+    Ok("codeee".to_string())
+}
+
 fn class_to_string(name: String, vars: Vec<Variable>) -> String {
     format!(
         "pub struct {} {{{}}}",

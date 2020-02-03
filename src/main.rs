@@ -1,189 +1,98 @@
-use std::path::PathBuf;
-use structopt::StructOpt;
+// use std::path::PathBuf;
+// use structopt::StructOpt;
 
 mod rustfmt;
 mod util;
 mod visitors;
 mod writers;
-mod rpc;
-
-#[derive(StructOpt, Debug)]
-enum Command {
-    #[structopt(name = "list-models", about = "Lists models in a source file")]
-    ListModels {
-        #[structopt(help = "", parse(from_os_str), name = "file")]
-        file: PathBuf,
-    },
-
-    #[structopt(name = "list-requests", about = "Lists Requests in a source file")]
-    ListRequests {
-        #[structopt(help = "", parse(from_os_str), name = "file")]
-        file: PathBuf,
-    },
-
-    #[structopt(name = "update-model", about = "Update a model in a source file")]
-    UpdateModel {
-        #[structopt(help = "", parse(from_os_str), name = "file")]
-        file: PathBuf,
-        #[structopt(help = "", name = "json")]
-        json: String,
-    },
-
-    #[structopt(name = "update-request", about = "Update a Request in a source file")]
-    UpdateRequest {
-        #[structopt(help = "", parse(from_os_str), name = "file")]
-        file: PathBuf,
-        #[structopt(help = "", name = "json")]
-        json: String,
-    },
-
-    #[structopt(name = "insert-model", about = "Insert a model in a source file")]
-    InsertModel {
-        #[structopt(help = "", parse(from_os_str), name = "file")]
-        file: PathBuf,
-        #[structopt(help = "", name = "json")]
-        json: String,
-    },
-
-    #[structopt(name = "insert-request", about = "Insert a Request in a source file")]
-    InsertRequest {
-        #[structopt(help = "", parse(from_os_str), name = "file")]
-        file: PathBuf,
-        #[structopt(help = "", name = "json")]
-        json: String,
-    },
-
-    #[structopt(name = "delete-model", about = "Delete a model in a source file")]
-    DeleteModel {
-        #[structopt(help = "", parse(from_os_str), name = "file")]
-        file: PathBuf,
-        #[structopt(help = "", name = "name")]
-        name: String,
-    },
-
-    #[structopt(name = "delete-request", about = "Delete a request in a source file")]
-    DeleteRequest {
-        #[structopt(help = "", parse(from_os_str), name = "file")]
-        file: PathBuf,
-        #[structopt(help = "", name = "name")]
-        name: String,
-    },
-
-    #[structopt(name = "generate-tests", about = "Generate unit tests for a project")]
-    GenerateTests,
-
-    #[structopt(
-        name = "test-error",
-        about = "Generate a response from stderr (for testing)"
-    )]
-    Error,
-}
+mod server;
+mod models;
+mod parser;
+mod generator;
 
 fn main() -> Result<(), String> {
-    // run().map_err(|e| format!("{}", e))
-    rpc::start_server();
+    server::start();
     Ok(())
 }
 
-fn run() -> Result<(), failure::Error> {
-    match Command::from_args() {
-        Command::Error => {
-            eprintln!("An example error to test things with");
-            eprintln!("A second line");
-            std::process::exit(1);
-        }
-        Command::ListModels { file } => list_models(file)?,
-        Command::ListRequests { file } => list_requests(file)?,
-        Command::UpdateModel { file, json } => update_model(json, file)?,
-        Command::UpdateRequest { file, json } => update_request(json, file)?,
-        Command::InsertModel { file, json } => insert_model(json, file)?,
-        Command::InsertRequest { file, json } => insert_request(json, file)?,
-        Command::DeleteModel { file, name } => delete_model(name, file)?,
-        Command::DeleteRequest { file, name } => delete_request(name, file)?,
-        Command::GenerateTests => generate_tests(),
-    }
+// fn list_models(file: PathBuf) -> Result<(), failure::Error> {
+//     let models = visitors::extract_models(&util::read_file(file)?)?;
+//     let json = &serde_json::to_string(&models)?;
 
-    Ok(())
-}
+//     println!("{}", json);
 
-fn list_models(file: PathBuf) -> Result<(), failure::Error> {
-    let models = visitors::extract_models(&util::read_file(file)?)?;
-    let json = &serde_json::to_string(&models)?;
+//     Ok(())
+// }
 
-    println!("{}", json);
+// fn list_requests(file: PathBuf) -> Result<(), failure::Error> {
+//     let requests = visitors::extract_requests(&util::read_file(file)?);
+//     let json = &serde_json::to_string(&requests)?;
 
-    Ok(())
-}
+//     println!("{}", json);
 
-fn list_requests(file: PathBuf) -> Result<(), failure::Error> {
-    let requests = visitors::extract_requests(&util::read_file(file)?);
-    let json = &serde_json::to_string(&requests)?;
+//     Ok(())
+// }
 
-    println!("{}", json);
+// fn update_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
+//     let model: cdd::Model = serde_json::from_str::<cdd::Model>(&json)?;
 
-    Ok(())
-}
+//     let models: Vec<cdd::Model> = visitors::extract_models(&util::read_file(file.clone())?)?
+//         .into_iter()
+//         .map(|src_model| {
+//             if model.name == src_model.name {
+//                 model.clone()
+//             } else {
+//                 src_model
+//             }
+//         })
+//         .collect();
 
-fn update_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
-    let model: cdd::Model = serde_json::from_str::<cdd::Model>(&json)?;
+//     util::write_file(file.clone(), &writers::print_models(models))?;
+//     rustfmt::rustfmt(file.to_str().ok_or(failure::format_err!("bad file"))?)?;
+//     Ok(())
+// }
+// fn update_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
+//     let request: cdd::Request = serde_json::from_str::<cdd::Request>(&json)?;
 
-    let models: Vec<cdd::Model> = visitors::extract_models(&util::read_file(file.clone())?)?
-        .into_iter()
-        .map(|src_model| {
-            if model.name == src_model.name {
-                model.clone()
-            } else {
-                src_model
-            }
-        })
-        .collect();
+//     let requests: Vec<cdd::Request> = visitors::extract_requests(&util::read_file(file.clone())?)
+//         .into_iter()
+//         .map(|src_request| {
+//             if request.name == src_request.name {
+//                 request.clone()
+//             } else {
+//                 src_request
+//             }
+//         })
+//         .collect();
 
-    util::write_file(file.clone(), &writers::print_models(models))?;
-    rustfmt::rustfmt(file.to_str().ok_or(failure::format_err!("bad file"))?)?;
-    Ok(())
-}
-fn update_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
-    let request: cdd::Request = serde_json::from_str::<cdd::Request>(&json)?;
+//     util::write_file(file.clone(), &writers::print_requests(requests))?;
+//     rustfmt::rustfmt(file.to_str().ok_or(failure::format_err!("bad file"))?)?;
+//     Ok(())
+// }
 
-    let requests: Vec<cdd::Request> = visitors::extract_requests(&util::read_file(file.clone())?)
-        .into_iter()
-        .map(|src_request| {
-            if request.name == src_request.name {
-                request.clone()
-            } else {
-                src_request
-            }
-        })
-        .collect();
+// fn insert_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
+//     let mut models: Vec<cdd::Model> = visitors::extract_models(&util::read_file(file.clone())?)?;
+//     models.push(serde_json::from_str::<cdd::Model>(&json)?);
+//     util::write_file(file.clone(), &writers::print_models(models))
+// }
 
-    util::write_file(file.clone(), &writers::print_requests(requests))?;
-    rustfmt::rustfmt(file.to_str().ok_or(failure::format_err!("bad file"))?)?;
-    Ok(())
-}
+// fn insert_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
+//     let mut requests: Vec<cdd::Request> =
+//         visitors::extract_requests(&util::read_file(file.clone())?);
+//     requests.push(serde_json::from_str::<cdd::Request>(&json)?);
+//     util::write_file(file.clone(), &writers::print_requests(requests))
+// }
 
-fn insert_model(json: String, file: PathBuf) -> Result<(), failure::Error> {
-    let mut models: Vec<cdd::Model> = visitors::extract_models(&util::read_file(file.clone())?)?;
-    models.push(serde_json::from_str::<cdd::Model>(&json)?);
-    util::write_file(file.clone(), &writers::print_models(models))
-}
+// fn delete_model(_name: String, _file: PathBuf) -> Result<(), failure::Error> {
+//     println!("Model successfully deleted");
+//     Ok(())
+// }
 
-fn insert_request(json: String, file: PathBuf) -> Result<(), failure::Error> {
-    let mut requests: Vec<cdd::Request> =
-        visitors::extract_requests(&util::read_file(file.clone())?);
-    requests.push(serde_json::from_str::<cdd::Request>(&json)?);
-    util::write_file(file.clone(), &writers::print_requests(requests))
-}
+// fn delete_request(_name: String, _file: PathBuf) -> Result<(), failure::Error> {
+//     println!("Request successfully deleted");
+//     Ok(())
+// }
 
-fn delete_model(_name: String, _file: PathBuf) -> Result<(), failure::Error> {
-    println!("Model successfully deleted");
-    Ok(())
-}
-
-fn delete_request(_name: String, _file: PathBuf) -> Result<(), failure::Error> {
-    println!("Request successfully deleted");
-    Ok(())
-}
-
-fn generate_tests() {
-    println!("Generating tests")
-}
+// fn generate_tests() {
+//     println!("Generating tests")
+// }

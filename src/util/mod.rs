@@ -24,3 +24,7 @@ pub fn write_file(pathbuf: PathBuf, content: &str) -> Result<(), failure::Error>
 // pub fn file_exists<S: std::convert::AsRef<std::ffi::OsStr>>(filename: S) -> bool {
 //     std::path::Path::new(&filename).exists()
 // }
+
+pub(crate) fn truncate(s: String, max_width: usize) -> String {
+    s.chars().take(max_width).collect()
+}
