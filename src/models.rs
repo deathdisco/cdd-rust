@@ -3,7 +3,7 @@ use cdd::*;
 
 #[derive(Deserialize, Debug)]
 pub struct ParseRequest {
-    code: String,
+    pub code: String,
 }
 
 #[derive(Deserialize, Debug)]

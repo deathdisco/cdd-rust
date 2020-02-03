@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use syn::visit::Visit;
 use syn::{Fields, Item, Type};
 
-pub fn extract_structures(code: &str) -> Result<HashMap<String, Vec<Variable>>, failure::Error> {
+pub fn extract_structures_from_code(code: &str) -> Result<HashMap<String, Vec<Variable>>, failure::Error> {
     let mut visitor = StructVisitor::new();
     let syntax = syn::parse_file(&code)?;
     syn::visit::visit_file(&mut visitor, &syntax);

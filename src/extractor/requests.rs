@@ -30,3 +30,4 @@ pub fn extract_requests(code: &str) -> Vec<Request> {
         .filter_map(|r| r)
         .collect()
 }
+

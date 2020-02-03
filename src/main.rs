@@ -4,11 +4,12 @@
 mod rustfmt;
 mod util;
 mod visitors;
-mod writers;
+// mod writers;
 mod server;
 mod models;
 mod parser;
 mod generator;
+mod extractor;
 
 fn main() -> Result<(), String> {
     server::start();

@@ -21,16 +21,25 @@ pub fn start() {
     let mut io = IoHandler::new();
 
     io.add_method("update", update);
-    io.add_method("parse", |params| {
-        println!("parse: {:?}", params);
-        Ok(Value::String("hello".into()))
-    });
+    io.add_method("parse", parse);
 
 	let server = ServerBuilder::new(io)
 		.start(&"0.0.0.0:3030".parse().unwrap())
 		.expect("Server must start with no issues");
 
 	server.wait().unwrap()
+}
+
+/// parse a rust code block into an ast structure
+fn parse(params: jsonrpc_core::Params) -> std::result::Result<Value, Error> {
+    log(format!("-> parse: {:?}", params));
+
+    let params:ParseRequest = params.parse()?;
+    let project:Project = crate::parser::parse_code_to_project(&params.code)
+        .map_err(|e| rpc_error(&format!("{}", e)))?;
+    
+
+    return Ok(serde_json::json!({"project": project}))
 }
 
 /// update a rust code block with directives from an adt structure
