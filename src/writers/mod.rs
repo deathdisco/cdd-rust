@@ -5,13 +5,9 @@ pub use models::*;
 mod requests;
 pub use requests::*;
 
-pub fn project_to_code(project: Project) -> Result<String, failure::Error> {
-    Ok("codeee".to_string())
-}
-
 fn class_to_string(name: String, vars: Vec<Variable>) -> String {
     format!(
-        "pub struct {} {{{}}}",
+        "pub struct {} {{{}\n}}",
         name,
         vars.into_iter().map(var_to_string).collect::<String>()
     )
@@ -25,7 +21,7 @@ fn var_to_string(var: Variable) -> String {
     };
 
     format!(
-        "pub {}: {},\n",
+        "\n\tpub {}: {},",
         var.name,
         var_type
     )

@@ -1,7 +1,7 @@
 use serde::{Deserialize};
 use cdd::*;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct ParseRequest {
     pub code: String,
 }

@@ -4,7 +4,7 @@
 mod rustfmt;
 mod util;
 mod visitors;
-// mod writers;
+mod writers;
 mod server;
 mod models;
 mod parser;
