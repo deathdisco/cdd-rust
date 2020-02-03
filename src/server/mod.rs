@@ -24,7 +24,7 @@ pub fn start() {
     io.add_method("parse", parse);
 
 	let server = ServerBuilder::new(io)
-		.start(&"0.0.0.0:3030".parse().unwrap())
+		.start(&"0.0.0.0:7779".parse().unwrap())
 		.expect("Server must start with no issues");
 
 	server.wait().unwrap()
