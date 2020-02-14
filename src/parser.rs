@@ -1,4 +1,3 @@
-
 use cdd::*;
 
 pub(crate) fn parse_code_to_ast(code: &str) -> Result<syn::File, syn::Error> {

@@ -3,7 +3,9 @@ use std::collections::HashMap;
 use syn::visit::Visit;
 use syn::{Fields, Item, Type};
 
-pub fn extract_structures_from_code(code: &str) -> Result<HashMap<String, Vec<Variable>>, failure::Error> {
+pub fn extract_structures_from_code(
+    code: &str,
+) -> Result<HashMap<String, Vec<Variable>>, failure::Error> {
     let mut visitor = StructVisitor::new();
     let syntax = syn::parse_file(&code)?;
     syn::visit::visit_file(&mut visitor, &syntax);
@@ -18,7 +20,7 @@ fn syn_type_to_cdd_type(ty: &str) -> VariableType {
         "f64" => VariableType::FloatType,
         "bool" => VariableType::BoolType,
         "Vec" => VariableType::ArrayType(Box::new(VariableType::StringType)), // fix
-        _ => VariableType::ComplexType(ty.to_string()), // fix
+        _ => VariableType::ComplexType(ty.to_string()),                       // fix
     }
 }
 
@@ -32,7 +34,14 @@ fn type_is_option(ty: &Type) -> bool {
 fn extract_variables(fields: &Fields) -> Vec<cdd::Variable> {
     fn extract_ident_from_type(ty: &Type) -> String {
         match ty {
-            Type::Path(typepath) => typepath.path.segments.iter().next().unwrap().ident.to_string(),
+            Type::Path(typepath) => typepath
+                .path
+                .segments
+                .iter()
+                .next()
+                .unwrap()
+                .ident
+                .to_string(),
             _ => panic!("oops, extracting ident from type failed"),
         }
     }

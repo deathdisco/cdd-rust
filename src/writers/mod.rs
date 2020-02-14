@@ -20,11 +20,7 @@ fn var_to_string(var: Variable) -> String {
         format!("{}", variable_type_to_rust_type(var.variable_type))
     };
 
-    format!(
-        "\n\tpub {}: {},",
-        var.name,
-        var_type
-    )
+    format!("\n\tpub {}: {},", var.name, var_type)
 }
 
 fn variable_type_to_rust_type(vartype: VariableType) -> String {
