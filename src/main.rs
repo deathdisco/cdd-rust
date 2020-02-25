@@ -8,7 +8,7 @@ mod writers;
 mod server;
 mod models;
 mod parser;
-mod generator;
+mod generators;
 mod extractor;
 
 fn main() -> Result<(), String> {

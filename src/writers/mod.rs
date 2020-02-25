@@ -5,6 +5,10 @@ pub use models::*;
 mod requests;
 pub use requests::*;
 
+pub(crate) mod classes;
+pub(crate) mod functions;
+pub(crate) mod variable_type;
+
 fn class_to_string(name: String, vars: Vec<Variable>) -> String {
     format!(
         "pub struct {} {{{}\n}}",

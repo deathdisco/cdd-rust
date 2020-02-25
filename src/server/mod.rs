@@ -50,7 +50,7 @@ fn update(params: jsonrpc_core::Params) -> std::result::Result<Value, Error> {
     let project:Project = crate::parser::parse_code_to_project(&params.code)
         .map_err(|e| rpc_error(&format!("{}", e)))?;
 
-    return crate::generator::update(&params.project, &params.code)
+    return crate::generators::update(&params.project, &params.code)
         .map(|code| serde_json::json!({"code": code}))
         .map_err(|e| rpc_error(&format!("{}", e)));
 }
