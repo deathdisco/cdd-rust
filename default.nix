@@ -8,6 +8,7 @@ pkgs.mkShell {
     clang
     openssl
     pkgconfig
+    steam-run
   ];
 
   shellHook = ''

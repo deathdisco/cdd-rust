@@ -1,5 +1,4 @@
 use cdd::*;
-use std::collections::HashMap;
 
 pub fn extract_from_ast(syntax: &syn::File) -> Result<Vec<Request>, failure::Error> {
     let mut visitor = crate::visitors::StructVisitor::new();
@@ -13,8 +12,8 @@ pub fn extract_from_ast(syntax: &syn::File) -> Result<Vec<Request>, failure::Err
             params: vars.into_iter().map(|v| Box::new(v)).collect(),
             method: Method::Get,
             path: "/".to_string(),
-            error_type: "None".to_string(),
-            response_type: "None".to_string(),
+            error_type: None,
+            response_type: None,
         })
         .collect())
 }
@@ -33,9 +32,9 @@ pub fn struct_to_request(structure: (String, Vec<Variable>)) -> Option<Request> 
         name,
         params: vec![],
         path: "".to_string(),
-        error_type: "".to_string(),
+        error_type: None,
         method: Method::Get,
-        response_type: "Petty".to_string(),
+        response_type: None,
     })
 }
 

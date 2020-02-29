@@ -44,13 +44,17 @@ fn parse(params: jsonrpc_core::Params) -> std::result::Result<Value, Error> {
 
 /// update a rust code block with directives from an adt structure
 fn update(params: jsonrpc_core::Params) -> std::result::Result<Value, Error> {
-    log(format!("-> update: {:?}", params));
+    log(format!("<- request: {:?}", params));
 
     let params: UpdateRequest = params.parse()?;
     let project: Project = crate::parser::parse_code_to_project(&params.code)
         .map_err(|e| rpc_error(&format!("{}", e)))?;
 
     crate::generators::update(&params.project, &params.code)
-        .map(|code| serde_json::json!({"code": code}))
+        .map(|code| {
+            let json = serde_json::json!({"code": code});
+            log(format!("-> response: {:?}", json));
+            json
+        })
         .map_err(|e| rpc_error(&format!("{}", e)))
 }

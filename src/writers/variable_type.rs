@@ -1,7 +1,7 @@
 use cdd::*;
 
 pub(crate) fn variable_type_to_rust_type(vt: &VariableType) -> String {
-    match(vt) {
+    match vt {
         VariableType::StringType => "String".to_string(),
         VariableType::IntType => "i64".to_string(),
         VariableType::BoolType => "bool".to_string(),

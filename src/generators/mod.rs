@@ -1,6 +1,6 @@
 use cdd::*;
 
-pub fn update(project: &Project, code: &str) -> Result<String, failure::Error> {
+pub fn update(project: &Project, _code: &str) -> Result<String, failure::Error> {
     let requests = project.requests
         .iter()
         .map(request_to_code)
@@ -39,10 +39,16 @@ fn request_to_code(request: &Request) -> String {
                 param.name)
         }).collect::<Vec<String>>().join(", "));
 
+
+    let response_type:String = request.response_type.clone()
+        .map(|rt| format!(" -> ApiResult<{}>",
+            crate::writers::variable_type::variable_type_to_rust_type(&rt)))
+        .unwrap_or("".to_string());
+
     crate::writers::functions::function(
         &request.name,
         &params,
-        " -> ApiResult<Vec<Pet>>",
+        &response_type,
         &body)
 }
 
