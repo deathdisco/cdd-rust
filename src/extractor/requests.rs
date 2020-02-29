@@ -1,15 +1,15 @@
 use cdd::*;
 
 pub fn extract_from_ast(syntax: &syn::File) -> Result<Vec<Request>, failure::Error> {
-    let mut visitor = crate::visitors::StructVisitor::new();
+    let mut visitor = crate::visitors::FunctionVisitor::new();
     syn::visit::visit_file(&mut visitor, &syntax);
 
     Ok(visitor
-        .structs
+        .functions
         .into_iter()
-        .map(|(name, vars)| Request {
-            name,
-            params: vars.into_iter().map(|v| Box::new(v)).collect(),
+        .map(|fnc| Request {
+            name: fnc.name,
+            params: Vec::new(),
             method: Method::Get,
             path: "/".to_string(),
             error_type: None,
