@@ -13,7 +13,7 @@ pub fn extract_from_ast(syntax: &syn::File) -> Result<Vec<Request>, failure::Err
             method: Method::Get,
             path: "/".to_string(),
             error_type: None,
-            response_type: None,
+            response_type: fnc.return_type.map(|rt| Box::new(rt)),
         })
         .collect())
 }

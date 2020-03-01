@@ -39,7 +39,10 @@ fn parse(params: jsonrpc_core::Params) -> std::result::Result<Value, Error> {
     let project: Project = crate::parser::parse_code_to_project(&params.code)
         .map_err(|e| rpc_error(&format!("{}", e)))?;
 
-    return Ok(serde_json::json!({ "project": project }));
+    let response = serde_json::json!({ "project": project });
+    println!("<- response: {}", response);
+
+    return Ok(response);
 }
 
 /// update a rust code block with directives from an adt structure
