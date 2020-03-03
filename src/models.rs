@@ -11,3 +11,8 @@ pub struct UpdateRequest {
     pub code: String,
     pub project: Project,
 }
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct SerialiseRequest {
+    pub code: String,
+}
