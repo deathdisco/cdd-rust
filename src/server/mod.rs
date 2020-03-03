@@ -35,27 +35,15 @@ pub fn start(hostname: &str, port: i32) -> std::result::Result<(), Box<dyn std::
 }
 
 fn serialise(params: jsonrpc_core::Params) -> std::result::Result<Value, Error> {
-    log(format!("-> serialise: {:?}", params));
-    
+    // log(format!("-> serialise: {:?}", params));
     let params: SerialiseRequest = params.parse()?;
-    log(format!("-> serialise.params: {:?}", params));
 
-    let json_ast:String = crate::parser::parse_code_to_json(&params.code)
-        .map_err(|e| rpc_error(&format!("{:?}", e)))?;
-    
-    log(format!("-> serialise.params.json_ast: {}", json_ast));
-
-    // use serde_json::{Deserializer, Value};
-    // let stream = Deserializer::from_str(&json_ast).into_iter::<Value>();
-
-    // let json = serde_json::from_str(&json_ast)
-    //     .map_err(|e| rpc_error(&format!("serde_json::from_str: {:?}", e)))?;
-
-    // let response = serde_json::json!({ "ast": stream });
-    let response = serde_json::from_str(&format!("{{\"ast\": {}}}", json_ast))
-        .map_err(|e| rpc_error(&format!("serde_json::from_str: {:?}", e)))?;
-
-    Ok(response)
+    crate::parser::parse_code_to_json(&params.code)
+        .map_err(|e| rpc_error(&format!("{:?}", e)))
+        .and_then(|json_as_string|
+            serde_json::from_str(&format!("{{\"ast\": {}}}", json_as_string))
+                .map_err(|e| rpc_error(&format!("{:?}", e)))
+        )
 }
 
 fn deserialise(params: jsonrpc_core::Params) -> std::result::Result<Value, Error> {
