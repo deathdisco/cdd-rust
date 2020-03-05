@@ -9,5 +9,7 @@ mod visitors;
 mod writers;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    server::start("127.0.0.1", 7779)
+    let server = "127.0.0.1:7779";
+    println!("Starting server on {}...", server);
+    server::start(server)
 }

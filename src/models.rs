@@ -16,3 +16,8 @@ pub struct UpdateRequest {
 pub struct SerialiseRequest {
     pub code: String,
 }
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct DeserialiseRequest {
+    pub ast: serde_json::Value,
+}

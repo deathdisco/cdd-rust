@@ -14,3 +14,4 @@ serde_json = "1.0"
 cdd = { git = "https://github.com/offscale/cdd-core" }
 failure = "0.1.6"
 jsonrpc-ws-server = "14.0"
+quote = "1.0"

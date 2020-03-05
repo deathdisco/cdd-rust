@@ -9,13 +9,19 @@ pub(crate) fn parse_code_to_project(code: &str) -> Result<Project, failure::Erro
     crate::extractor::extract_project_from_syn(&ast)
 }
 
-use syn_serde::json;
 pub(crate) fn parse_code_to_json(code: &str) -> Result<String, failure::Error> {
     let syn_file: syn::File = syn::parse_file(&code)?;
-    Ok(json::to_string_pretty(&syn_file))
+    Ok(syn_serde::json::to_string_pretty(&syn_file))
 }
 
-pub(crate) fn parse_json_to_code(code: &str) -> Result<String, failure::Error> {
-    let syn_file: syn::File = json::from_str(&code)?;
-    Ok(format!("{:?}", syn_file))
+pub(crate) fn parse_ast_to_code(ast: &serde_json::Value) -> Result<String, failure::Error> {
+    let stringified_json = ast.to_string();
+    let syntax: syn::File = syn_serde::json::from_str(&stringified_json)?;
+
+    use quote::ToTokens;
+    
+    let code = syntax.into_token_stream().to_string();
+    let formatted_code = crate::rustfmt::rustfmt(&code)?;
+
+    Ok(formatted_code)
 }

@@ -18,11 +18,9 @@ fn log(msg: String) {
     // println!("{}", msg);
 }
 
-pub fn start(hostname: &str, port: i32) -> std::result::Result<(), Box<dyn std::error::Error>> {
+pub fn start(server: &str) -> std::result::Result<(), Box<dyn std::error::Error>> {
     let mut io = IoHandler::new();
-    let server = format!("{}:{}", hostname, port);
-
-    println!("Starting server on {}...", server);
+    // let server = format!("{}:{}", hostname, port);
 
     io.add_method("update", update);
     io.add_method("parse", parse);
@@ -49,8 +47,9 @@ fn serialise(params: jsonrpc_core::Params) -> std::result::Result<Value, Error> 
 fn deserialise(params: jsonrpc_core::Params) -> std::result::Result<Value, Error> {
     log(format!("-> deserialise: {:?}", params));
     
-    let params: ParseRequest = params.parse()?;
-    let code:String = crate::parser::parse_json_to_code(&params.code)
+    let params: DeserialiseRequest = params.parse()?;
+
+    let code:String = crate::parser::parse_ast_to_code(&params.ast)
         .map_err(|e| rpc_error(&format!("{}", e)))?;
 
     let response = serde_json::json!({ "code": code });
