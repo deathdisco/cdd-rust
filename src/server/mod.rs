@@ -52,8 +52,8 @@ fn deserialise(params: jsonrpc_core::Params) -> std::result::Result<Value, Error
     let code:String = crate::parser::parse_ast_to_code(&params.ast)
         .map_err(|e| rpc_error(&format!("{}", e)))?;
 
-    let response = serde_json::json!({ "code": code });
-    println!("<- response: {}", code);
+    let response = serde_json::json!({ "output": code });
+    println!("<- deserialise: {}", code);
 
     Ok(response)
 }
